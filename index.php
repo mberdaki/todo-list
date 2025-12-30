@@ -8,19 +8,23 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Adicionar tarefa (PROTEGIDO)
+// Adicionar tarefa
 if (isset($_POST['acao']) && $_POST['acao'] == 'adicionar') {
     $titulo = $_POST['titulo'] ?? '';
     $descricao = $_POST['descricao'] ?? '';
     $stmt = $pdo->prepare("INSERT INTO tarefas (usuario_id, titulo, descricao) VALUES (?, ?, ?)");
     $stmt->execute([$user_id, $titulo, $descricao]);
+    header('Location: index.php');  // ← REDIRECIONA (resolve duplicação)
+    exit;
 }
 
-// Marcar como concluída (PROTEGIDO)
+// Marcar como concluída
 if (isset($_POST['acao']) && $_POST['acao'] == 'concluir') {
     $id = $_POST['id'] ?? 0;
     $stmt = $pdo->prepare("UPDATE tarefas SET concluida = 1 WHERE id = ? AND usuario_id = ?");
     $stmt->execute([$id, $user_id]);
+    header('Location: index.php');  // ← REDIRECIONA
+    exit;
 }
 
 // Listar tarefas
